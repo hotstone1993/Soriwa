@@ -8,7 +8,6 @@
 typedef struct param {
 }param_t;
 
-
 class Soriwa {
 private:
 public:
@@ -16,7 +15,10 @@ public:
     ~Soriwa();
 
     void init();
-    void setup(param_t* config);
+    void deinit();
+    int addAudio(param_t* config, std::string path, std::string nickName);
+    int deleteAudioById(int id);
+    void play(int id, int playMode);
 };
 
 #endif //SORIWA_SORIWA_H
