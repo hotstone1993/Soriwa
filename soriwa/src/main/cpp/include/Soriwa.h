@@ -5,8 +5,12 @@
 #ifndef SORIWA_SORIWA_H
 #define SORIWA_SORIWA_H
 
-typedef struct param {
-}param_t;
+enum class PlayMode {
+    Once, Repeat
+};
+
+struct Configuration {
+};
 
 class Soriwa {
 private:
@@ -16,9 +20,9 @@ public:
 
     void init();
     void deinit();
-    int addAudio(param_t* config, std::string path, std::string nickName);
+    int addAudio(Configuration* config, const std::string& path);
     int deleteAudioById(int id);
-    void play(int id, int playMode);
+    int play(int id, PlayMode playMode);
 };
 
 #endif //SORIWA_SORIWA_H

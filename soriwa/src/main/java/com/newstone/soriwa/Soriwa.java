@@ -1,11 +1,17 @@
 package com.newstone.soriwa;
 
+enum PlayMode {
+    Once, Repeat
+}
+
 public class Soriwa {
     static {
-        System.loadLibrary("HelloJni");
+        System.loadLibrary("Soriwa");
     }
     public Soriwa() {
     }
+
+    static long instance;
 
     public native void init();
     public native void deinit();

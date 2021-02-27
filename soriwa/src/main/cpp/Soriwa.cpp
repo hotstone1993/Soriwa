@@ -2,7 +2,6 @@
 // Created by newstone 2021-02-20.
 //
 #include <oboe/Oboe.h>
-
 #include "include/Soriwa.h"
 
 Soriwa::Soriwa() {
@@ -20,14 +19,21 @@ void Soriwa::init() {
     builder.setChannelCount(oboe::ChannelCount::Mono);
 }
 
-unsigned int Soriwa::addAudio(param_t* config, std::string path) {
+int Soriwa::addAudio(Configuration* config, const std::string& path) {
+    int result = 0;
+
+    return result;
 }
 
-int Soriwa::deleteAudioById(unsigned int id) {
+int Soriwa::deleteAudioById(int id) {
+    int result = 0;
 
+    return result;
 }
 
-void Soriwa::play(unsigned int id, int playMode) {
+int Soriwa::play(int id, PlayMode playMode) {
+    int result = 0;
 
+    return result;
 }
 
