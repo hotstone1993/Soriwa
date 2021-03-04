@@ -15,7 +15,7 @@ Soriwa* getInstance(JNIEnv* env, const jobject& obj) {
     jclass cls = env->GetObjectClass(obj);
     jfieldID id = env->GetFieldID(cls, INSTANCE, "J");
     jlong instancePointer = env->GetLongField(obj, id);
-    return static_cast<Soriwa*>(instancePointer);
+    return reinterpret_cast<Soriwa*>(instancePointer);
 }
 
 JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_init(JNIEnv *env, jobject obj) {
@@ -24,7 +24,7 @@ JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_init(JNIEnv *env, jobject
 
     jclass cls = env->GetObjectClass(obj);
     jfieldID id = env->GetFieldID(cls, INSTANCE, "J");
-    env->SetLongField(obj, id, static_cast<jlong>(newInstance));
+    env->SetLongField(obj, id, reinterpret_cast<jlong>(newInstance));
 }
 
 JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_deinit(JNIEnv *env, jobject obj) {
@@ -34,7 +34,7 @@ JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_deinit(JNIEnv *env, jobje
 
     jclass cls = env->GetObjectClass(obj);
     jfieldID id = env->GetFieldID(cls, INSTANCE, "J");
-    env->SetLongField(obj, id, nullptr);
+    env->SetLongField(obj, id, 0);
 }
 
 JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_addAudio(JNIEnv *env, jobject obj, jobject config, jstring filePath) {

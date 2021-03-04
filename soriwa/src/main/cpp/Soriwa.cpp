@@ -3,11 +3,13 @@
 //
 #include <oboe/Oboe.h>
 #include "include/Soriwa.h"
+#include "player/include/BasePlayer.h"
 
-Soriwa::Soriwa() {
+Soriwa::Soriwa() : basePlayer(new BasePlayer) {
 }
 
 Soriwa::~Soriwa() {
+    deinit();
 }
 
 void Soriwa::init() {
@@ -17,6 +19,14 @@ void Soriwa::init() {
     builder.setSharingMode(oboe::SharingMode::Exclusive);
     builder.setFormat(oboe::AudioFormat::Float);
     builder.setChannelCount(oboe::ChannelCount::Mono);
+    builder.setDataCallback(basePlayer);
+}
+
+void Soriwa::deinit() {
+    if(basePlayer != nullptr) {
+        delete basePlayer;
+        basePlayer = nullptr;
+    }
 }
 
 int Soriwa::addAudio(Configuration* config, const std::string& path) {

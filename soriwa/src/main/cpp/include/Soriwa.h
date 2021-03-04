@@ -12,6 +12,8 @@ enum class PlayMode {
 struct Configuration {
 };
 
+class BasePlayer;
+
 class Soriwa {
 private:
 public:
@@ -23,6 +25,8 @@ public:
     int addAudio(Configuration* config, const std::string& path);
     int deleteAudioById(int id);
     int play(int id, PlayMode playMode);
+private:
+    BasePlayer* basePlayer;
 };
 
 #endif //SORIWA_SORIWA_H

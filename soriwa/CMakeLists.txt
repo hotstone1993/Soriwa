@@ -6,10 +6,14 @@ set (SRC_DIR src/main/cpp)
 
 set (SOURCES
         ${SRC_DIR}/com_newstone_soriwa_Soriwa.cpp
-        ${SRC_DIR}/Soriwa.cpp)
+        ${SRC_DIR}/Soriwa.cpp
+        ${SRC_DIR}/player/BasePlayer.cpp
+        )
 
 set (HEADERS
-        main/cpp/include)
+        main/cpp/include
+        main/cpp/player/include
+        )
 
 find_library(android-lib android)
 find_library(log-lib log)
