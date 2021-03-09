@@ -4,8 +4,9 @@
 /* Header for class com_newstone_soriwa_Soriwa */
 #include "include/com_newstone_soriwa_Soriwa.h"
 #include "include/Soriwa.h"
+#include "../../../../oboe/src/common/OboeDebug.h"
 
-const char* INSTANCE = "instance";
+const char* const INSTANCE = "instance";
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,6 +25,7 @@ JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_init(JNIEnv *env, jobject
 
     jclass cls = env->GetObjectClass(obj);
     jfieldID id = env->GetFieldID(cls, INSTANCE, "J");
+    LOGE("BAKBAK: %d", id) ;
     env->SetLongField(obj, id, reinterpret_cast<jlong>(newInstance));
 }
 

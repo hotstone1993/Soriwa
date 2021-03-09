@@ -9,9 +9,10 @@ public class Soriwa {
         System.loadLibrary("Soriwa");
     }
     public Soriwa() {
+        instance = 0;
     }
 
-    static long instance;
+    long instance;
 
     public native void init();
     public native void deinit();
