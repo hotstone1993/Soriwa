@@ -1,11 +1,15 @@
 //
 // Created by newstone 2021-02-20.
 //
-#include <oboe/Oboe.h>
+#include <android/log.h>
 #include "include/Soriwa.h"
 #include "player/include/BasePlayer.h"
 
-Soriwa::Soriwa() : basePlayer(new BasePlayer) {
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+Soriwa::Soriwa() : count(0) {
 }
 
 Soriwa::~Soriwa() {
@@ -13,37 +17,59 @@ Soriwa::~Soriwa() {
 }
 
 void Soriwa::init() {
+}
+
+void Soriwa::deinit() {
+    reset();
+}
+
+int Soriwa::addAudio(Configuration* config, const std::string& path) {
+    BasePlayer* player = new BasePlayer();
+    player->addSource(path);
+
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output);
     builder.setPerformanceMode(oboe::PerformanceMode::LowLatency);
     builder.setSharingMode(oboe::SharingMode::Exclusive);
     builder.setFormat(oboe::AudioFormat::Float);
-    builder.setChannelCount(oboe::ChannelCount::Mono);
-    builder.setDataCallback(basePlayer);
-}
+    builder.setChannelCount(player->source->getChannels());
+    builder.setSampleRate(player->source->getSampleRate());
+    builder.setDataCallback(player);
 
-void Soriwa::deinit() {
-    if(basePlayer != nullptr) {
-        delete basePlayer;
-        basePlayer = nullptr;
-    }
-}
+    oboe::AudioStream* tempStream;
+    streamMap.insert(std::make_pair(count, tempStream));
+    players.insert(std::make_pair(count, player));
 
-int Soriwa::addAudio(Configuration* config, const std::string& path) {
-    int result = 0;
+    builder.openStream(&streamMap[count]);
 
-    return result;
+    return count++;
 }
 
 int Soriwa::deleteAudioById(int id) {
     int result = 0;
+    players[id]->deleteSource(id);
+    auto it = streamMap.find(id);
+    it->second->close();
+    streamMap.erase(it);
 
     return result;
 }
 
 int Soriwa::play(int id, PlayMode playMode) {
     int result = 0;
-
+    streamMap[id]->requestStart();
     return result;
+}
+
+int Soriwa::stop(int id) {
+    int result = 0;
+    streamMap[id]->requestStop();
+    return result;
+}
+
+void Soriwa::reset() {
+    for(auto it = players.begin(); it != players.end(); ++it) {
+        delete it->second;
+    }
 }
 
