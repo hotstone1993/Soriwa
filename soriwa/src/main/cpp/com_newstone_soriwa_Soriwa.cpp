@@ -63,6 +63,13 @@ JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_play(JNIEnv *env, jobject
     result = instance->play(id, static_cast<PlayMode>(playMode));
     return result;
 }
+
+JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_stop(JNIEnv *env, jobject obj, jint id) {
+    int result = 0;
+    Soriwa* instance = getInstance(env, obj);
+    result = instance->stop(id);
+    return result;
+}
 #ifdef __cplusplus
 }
 #endif

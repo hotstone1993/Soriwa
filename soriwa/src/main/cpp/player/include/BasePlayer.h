@@ -9,6 +9,14 @@
 #include <unordered_map>
 #include <BaseSource.h>
 
+enum class PlayerStatus {
+    loading, // Parsing music data
+    ready, // Complete loading of music data
+    playing,
+    finishing,
+    end
+};
+
 class BasePlayer : public oboe::AudioStreamCallback {
 public:
     BasePlayer();
@@ -20,8 +28,15 @@ public:
 
     int addSource(const std::string& sourcePath);
     void deleteSource(int id);
+
+    int play();
+    int stop();
+
+    PlayerStatus getStatus();
+
     BaseSource* source;
 private:
+    PlayerStatus status;
 };
 
 #endif //SORIWA_BASEPLAYER_H

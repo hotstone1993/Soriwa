@@ -6,8 +6,9 @@
 #define SORIWA_COMMON_HEADER_H
 
 enum {
-    SUCCESS,
-    FAIL
+    FAIL = -1,
+    SUCCESS = 0,
+    NOT_LOADED = 1
 };
 
 #endif //SORIWA_COMMON_HEADER_H

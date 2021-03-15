@@ -4,10 +4,10 @@
 #include <android/log.h>
 #include "include/Soriwa.h"
 #include "player/include/BasePlayer.h"
-
+#include "common_header.h"
+#include <thread>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Soriwa::Soriwa() : count(0) {
 }
@@ -37,10 +37,9 @@ int Soriwa::addAudio(Configuration* config, const std::string& path) {
     builder.setDataCallback(player);
 
     oboe::AudioStream* tempStream;
+    builder.openStream(&streamMap[count]);
     streamMap.insert(std::make_pair(count, tempStream));
     players.insert(std::make_pair(count, player));
-
-    builder.openStream(&streamMap[count]);
 
     return count++;
 }
@@ -56,15 +55,33 @@ int Soriwa::deleteAudioById(int id) {
 }
 
 int Soriwa::play(int id, PlayMode playMode) {
-    int result = 0;
-    streamMap[id]->requestStart();
-    return result;
+    std::unordered_map<int, oboe::AudioStream*>::iterator sm =  streamMap.find(id);
+    std::unordered_map<int, BasePlayer*>::iterator player = players.find(id);
+    if(sm != streamMap.end()) {
+        if(player->second->getStatus() == PlayerStatus::loading) {
+            return NOT_LOADED;
+        }
+        player->second->play();
+        sm->second->requestStart();
+    } else {
+        return FAIL;
+    }
+    return SUCCESS;
 }
 
 int Soriwa::stop(int id) {
     int result = 0;
-    streamMap[id]->requestStop();
-    return result;
+    std::unordered_map<int, oboe::AudioStream*>::iterator it =  streamMap.find(id);
+    std::unordered_map<int, BasePlayer*>::iterator player = players.find(id);
+    if(it != streamMap.end()) {
+        if(player->second->getStatus() == PlayerStatus::playing) {
+            player->second->stop();
+            it->second->requestStop();
+        }
+    } else {
+        return FAIL;
+    }
+    return SUCCESS;
 }
 
 void Soriwa::reset() {

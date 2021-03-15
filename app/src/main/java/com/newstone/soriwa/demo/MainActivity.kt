@@ -3,7 +3,6 @@ package com.newstone.soriwa.demo
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -15,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     val kReadExternalStorageRequest = 100
     lateinit var processor: Soriwa
     lateinit var playBtn: Button
+    lateinit var stopBtn: Button
     var id: Int = 0
     override fun onStart() {
         checkPermissions()
@@ -28,8 +28,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout)
 
-        playBtn = findViewById<Button>(R.id.playBtn)
+        playBtn = findViewById(R.id.playBtn)
         playBtn.setOnClickListener { processor.play(id, 0) }
+        stopBtn = findViewById(R.id.stopBtn)
+        stopBtn.setOnClickListener{ processor.stop(id) }
     }
 
     private fun checkPermissions() {

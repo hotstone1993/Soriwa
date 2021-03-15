@@ -19,4 +19,5 @@ public class Soriwa {
     public native int addAudio(Configuration config, String path);
     public native int deleteAudioById(int id);
     public native void play(int id, int playMode);
+    public native void stop(int id);
 }
