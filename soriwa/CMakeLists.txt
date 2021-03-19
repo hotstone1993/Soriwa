@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.4.1)
 set (INTERNAL_SHARED_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI})
 set (OBOE_DIR ../oboe)
 set (SRC_DIR src/main/cpp)
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 # FFMpeg Library
 add_library(lib_avcodec SHARED IMPORTED)
 set_target_properties(lib_avcodec PROPERTIES IMPORTED_LOCATION
@@ -26,6 +26,7 @@ set (SOURCES
         ${SRC_DIR}/player/BasePlayer.cpp
         ${SRC_DIR}/source/BaseSource.cpp
         ${SRC_DIR}/util/FfmpegDecoder.cpp
+        ${SRC_DIR}/util/AudioThreadPool.cpp
         )
 
 set (HEADERS

@@ -6,6 +6,7 @@
 #define SORIWA_SORIWA_H
 #include <oboe/Oboe.h>
 #include <unordered_map>
+#include <AudioThreadPool.h>
 
 enum class PlayMode {
     Once, Repeat
@@ -33,6 +34,7 @@ private:
     int count;
     std::unordered_map<int, BasePlayer*> players;
     std::unordered_map<int, oboe::AudioStream*> streamMap;
+    AudioThreadPool threadPool;
 };
 
 #endif //SORIWA_SORIWA_H

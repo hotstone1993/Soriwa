@@ -5,25 +5,11 @@
 #include "include/Soriwa.h"
 #include "player/include/BasePlayer.h"
 #include "common_header.h"
-#include <thread>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-Soriwa::Soriwa() : count(0) {
-}
 
-Soriwa::~Soriwa() {
-    deinit();
-}
-
-void Soriwa::init() {
-}
-
-void Soriwa::deinit() {
-    reset();
-}
-
-int Soriwa::addAudio(Configuration* config, const std::string& path) {
+void loadAudioDataFromFile(std::string path, int count, std::unordered_map<int, oboe::AudioStream*>& streamMap, std::unordered_map<int, BasePlayer*>& players) {
+    __android_log_print(ANDROID_LOG_DEBUG, "SORIWA", "%s" ,path.c_str());
     BasePlayer* player = new BasePlayer();
     player->addSource(path);
 
@@ -40,8 +26,27 @@ int Soriwa::addAudio(Configuration* config, const std::string& path) {
     builder.openStream(&streamMap[count]);
     streamMap.insert(std::make_pair(count, tempStream));
     players.insert(std::make_pair(count, player));
+}
 
-    return count++;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+Soriwa::Soriwa() : count(0), threadPool(3) {
+}
+
+Soriwa::~Soriwa() {
+    deinit();
+}
+
+void Soriwa::init() {
+}
+
+void Soriwa::deinit() {
+    reset();
+}
+
+int Soriwa::addAudio(Configuration* config, const std::string& path) {
+    threadPool.EnqueueJob([=]() {loadAudioDataFromFile(path, count, streamMap, players);});
+
+    return count + 1;
 }
 
 int Soriwa::deleteAudioById(int id) {
