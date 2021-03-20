@@ -9,7 +9,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void loadAudioDataFromFile(std::string path, int count, std::unordered_map<int, oboe::AudioStream*>& streamMap, std::unordered_map<int, BasePlayer*>& players) {
-    __android_log_print(ANDROID_LOG_DEBUG, "SORIWA", "%s" ,path.c_str());
     BasePlayer* player = new BasePlayer();
     player->addSource(path);
 
