@@ -2,15 +2,16 @@
 // Created by newstone 2021-02-20.
 //
 #include <android/log.h>
-#include "include/Soriwa.h"
 #include "player/include/BasePlayer.h"
 #include "common_header.h"
+#include "include/Soriwa.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void loadAudioDataFromFile(std::string path, int count, std::unordered_map<int, oboe::AudioStream*>& streamMap, std::unordered_map<int, BasePlayer*>& players) {
+void loadAudioDataFromFile(std::string path, Configuration* config, int count, std::unordered_map<int, oboe::AudioStream*>& streamMap, std::unordered_map<int, BasePlayer*>& players) {
     BasePlayer* player = new BasePlayer();
-    player->addSource(path);
+    player->addSource(path, config);
+    __android_log_print(ANDROID_LOG_DEBUG, "SORIWA", "%d, %d", config->sharingMode, config->playMode);
 
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output);
@@ -43,7 +44,7 @@ void Soriwa::deinit() {
 }
 
 int Soriwa::addAudio(Configuration* config, const std::string& path) {
-    threadPool.EnqueueJob([=]() {loadAudioDataFromFile(path, count, streamMap, players);});
+    threadPool.EnqueueJob([=]() {loadAudioDataFromFile(path, config, count, streamMap, players);});
 
     return count + 1;
 }
@@ -58,7 +59,7 @@ int Soriwa::deleteAudioById(int id) {
     return result;
 }
 
-int Soriwa::play(int id, PlayMode playMode) {
+int Soriwa::play(int id) {
     std::unordered_map<int, oboe::AudioStream*>::iterator sm =  streamMap.find(id);
     std::unordered_map<int, BasePlayer*>::iterator player = players.find(id);
     if(sm != streamMap.end()) {

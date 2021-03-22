@@ -4,6 +4,7 @@
 /* Header for class com_newstone_soriwa_Soriwa */
 #include "include/com_newstone_soriwa_Soriwa.h"
 #include "include/Soriwa.h"
+#include "common_header.h"
 
 const char* const INSTANCE = "instance";
 
@@ -43,10 +44,12 @@ JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_addAudio(JNIEnv *env, job
 //    jclass cls = env->GetObjectClass(config);
   //  jfieldID id = env->GetFieldID(cls, "config1", "I");
 
-    Configuration c;
+    Configuration* c = new Configuration();
     std::string path = env->GetStringUTFChars(filePath, NULL);
 
-    instance->addAudio(&c, path);
+    c->sharingMode = 0;
+    c->playMode = 1;
+    instance->addAudio(c, path);
     return result;
 }
 
@@ -57,10 +60,10 @@ JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_deleteAudioById(JNIEnv *e
     return result;
 }
 
-JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_play(JNIEnv *env, jobject obj, jint id, jint playMode) {
+JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_play(JNIEnv *env, jobject obj, jint id) {
     int result = 0;
     Soriwa* instance = getInstance(env, obj);
-    result = instance->play(id, static_cast<PlayMode>(playMode));
+    result = instance->play(id);
     return result;
 }
 

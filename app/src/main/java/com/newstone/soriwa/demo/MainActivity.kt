@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         checkPermissions()
         processor = Soriwa()
         processor.init()
-        id = processor.addAudio(null, "/sdcard/Gaudio/test.mp4")
+        id = processor.addAudio(null, "/sdcard/Gaudio/test.wav")
         super.onStart()
     }
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.layout)
 
         playBtn = findViewById(R.id.playBtn)
-        playBtn.setOnClickListener { processor.play(id, 0) }
+        playBtn.setOnClickListener { processor.play(id) }
         stopBtn = findViewById(R.id.stopBtn)
         stopBtn.setOnClickListener{ processor.stop(id) }
     }
@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity() {
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                     kReadExternalStorageRequest)
             }
-        } else {
         }
     }
     override fun onRequestPermissionsResult(requestCode: Int,

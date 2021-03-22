@@ -5,6 +5,7 @@
 #include "include/BaseSource.h"
 #include <FfmpegDecoder.h>
 #include <android/log.h>
+#include <common_header.h>
 
 BaseSource::BaseSource() : audioBuffer(nullptr),
                            length(0),
@@ -15,7 +16,9 @@ BaseSource::BaseSource() : audioBuffer(nullptr),
 }
 
 BaseSource::~BaseSource() {
-    delete[] audioBuffer;
+    if(audioBuffer != nullptr) {
+        delete[] audioBuffer;
+    }
 }
 
 int BaseSource::extractAudioSourceFromFile(std::string path) {
@@ -24,14 +27,18 @@ int BaseSource::extractAudioSourceFromFile(std::string path) {
     return result;
 }
 
-void BaseSource::getFrame(float* output, int framesize) {
+unsigned int BaseSource::getFrame(float* output, int framesize) {
     if(position + framesize <= length) {
         memcpy(output, audioBuffer + (position * channels), sizeof(float) * framesize * channels);
         position += framesize;
+
+        return framesize;
     } else {
         memcpy(output, audioBuffer + (position * channels), sizeof(float) * (length - position) * channels);
         memset(output + ((length - position) * channels) , 0, sizeof(float) * (framesize - (length - position)) * channels);
         position = 0;
+
+        return (length - position);
     }
 }
 int BaseSource::getChannels() {

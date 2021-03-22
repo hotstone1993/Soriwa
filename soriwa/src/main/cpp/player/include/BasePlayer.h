@@ -17,6 +17,8 @@ enum class PlayerStatus {
     end
 };
 
+class Configuration;
+
 class BasePlayer : public oboe::AudioStreamCallback {
 public:
     BasePlayer();
@@ -26,7 +28,7 @@ public:
     virtual void onErrorAfterClose(oboe::AudioStream *oboeStream, oboe::Result error) override;
     virtual void onErrorBeforeClose(oboe::AudioStream * oboeStream, oboe::Result error) override;
 
-    int addSource(const std::string& sourcePath);
+    int addSource(const std::string& sourcePath, Configuration* config);
     void deleteSource(int id);
 
     int play();
@@ -37,6 +39,7 @@ public:
     BaseSource* source;
 private:
     PlayerStatus status;
+    Configuration* configuration;
 };
 
 #endif //SORIWA_BASEPLAYER_H

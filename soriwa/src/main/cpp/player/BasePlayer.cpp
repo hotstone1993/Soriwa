@@ -5,7 +5,7 @@
 #include "include/BasePlayer.h"
 #include "common_header.h"
 
-BasePlayer::BasePlayer() : source(nullptr), status(PlayerStatus::loading) {
+BasePlayer::BasePlayer() : source(nullptr), status(PlayerStatus::loading), configuration(nullptr) {
 
 }
 BasePlayer::~BasePlayer() {
@@ -13,7 +13,10 @@ BasePlayer::~BasePlayer() {
 oboe::DataCallbackResult BasePlayer::onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) {
     float* outputData = static_cast<float *>(audioData);
     if(status == PlayerStatus::playing) {
-        source->getFrame(outputData, numFrames);
+        unsigned int result = source->getFrame(outputData, numFrames);
+        if(result != numFrames) {
+            status = PlayerStatus ::ready;
+        }
     }
 
     return oboe::DataCallbackResult::Continue;
@@ -25,19 +28,31 @@ void BasePlayer::onErrorAfterClose(oboe::AudioStream *oboeStream, oboe::Result e
 void BasePlayer::onErrorBeforeClose(oboe::AudioStream * oboeStream, oboe::Result error) {
 }
 
-int BasePlayer::addSource(const std::string& sourcePath) {
+int BasePlayer::addSource(const std::string& sourcePath, Configuration* config) {
     if(source != nullptr) {
         delete source;
     }
     source = new BaseSource();
+
+    configuration = new Configuration();
+    (*configuration) = config;
+    delete config;
+    config = nullptr;
+
     int result = source->extractAudioSourceFromFile(sourcePath);
     status = PlayerStatus ::ready;
     return result;
 }
 
 void BasePlayer::deleteSource(int id) {
-    delete source;
-    source = nullptr;
+    if(source != nullptr) {
+        delete source;
+        source = nullptr;
+    }
+    if(configuration != nullptr) {
+        delete configuration;
+        configuration = nullptr;
+    }
 }
 
 PlayerStatus BasePlayer::getStatus() {

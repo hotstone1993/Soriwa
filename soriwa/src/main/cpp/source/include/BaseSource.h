@@ -14,7 +14,7 @@ public:
 
     int extractAudioSourceFromFile(std::string path);
 
-    void getFrame(float* output, int framesize);
+    unsigned int getFrame(float* output, int framesize);
     int getChannels();
     int getSampleRate();
     int getBitPerSample();

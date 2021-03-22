@@ -45,7 +45,7 @@ JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_deleteAudioById
  * Signature: (II)I
  */
 JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_play
-  (JNIEnv *, jobject, jint, jint);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_newstone_soriwa_Soriwa
