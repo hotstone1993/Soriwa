@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var processor: Soriwa
     lateinit var playBtn: Button
     lateinit var stopBtn: Button
-    var id: Int = 0
+    var idMap: MutableMap<String, Int> = mutableMapOf()
     override fun onStart() {
         checkPermissions()
         processor = Soriwa()
@@ -25,7 +25,8 @@ class MainActivity : AppCompatActivity() {
         config.playMode = Configuration.PlayMode.Repeat.ordinal
         config.playMode = Configuration.SharingMode.Exclusive.ordinal
 
-        id = processor.addAudio(config, "/sdcard/Gaudio/test.wav")
+        val id = processor.addAudio(config, "/sdcard/Gaudio/test.wav")
+        idMap.put("test", id)
         super.onStart()
     }
 
@@ -34,9 +35,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.layout)
 
         playBtn = findViewById(R.id.playBtn)
-        playBtn.setOnClickListener { processor.play(id) }
+        playBtn.setOnClickListener { processor.play(idMap["test"]?:0) }
         stopBtn = findViewById(R.id.stopBtn)
-        stopBtn.setOnClickListener{ processor.stop(id) }
+        stopBtn.setOnClickListener{ processor.stop(idMap["test"]?:0) }
     }
 
     private fun checkPermissions() {
