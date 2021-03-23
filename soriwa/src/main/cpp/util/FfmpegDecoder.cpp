@@ -92,12 +92,17 @@ int FfmpegDecoder::getAudioStream(const std::string& filePath, float*& outputBuf
     length = static_cast<unsigned long long>((avFormatContext->duration / static_cast<float>(AV_TIME_BASE)) * sampleRate);
     void* tempBuffer = nullptr;
     AVSampleFormat sampleFormat = avCodecContext->sample_fmt;
-    bitsPerSample = 32; //
-    if (sampleFormat == AV_SAMPLE_FMT_S16 || sampleFormat == AV_SAMPLE_FMT_S16P) {
+    bitsPerSample = avCodecContext->bits_per_coded_sample; //
+    if(sampleFormat == AV_SAMPLE_FMT_U8P || sampleFormat == AV_SAMPLE_FMT_U8) {
+        tempBuffer = new unsigned char[channels * length];
+    } else if (sampleFormat == AV_SAMPLE_FMT_S16 || sampleFormat == AV_SAMPLE_FMT_S16P) {
         tempBuffer = new short[channels * length];
     } else if(sampleFormat == AV_SAMPLE_FMT_S32 || sampleFormat == AV_SAMPLE_FMT_S32P) {
         tempBuffer = new int[channels * length];
+    } else {
+        return -1;
     }
+
     //2. Decode
     outputBuffer = new float[channels * length];
 
@@ -114,7 +119,17 @@ int FfmpegDecoder::getAudioStream(const std::string& filePath, float*& outputBuf
             }
 
             if(gotFrame) {
-                if(sampleFormat == AV_SAMPLE_FMT_S16P) {
+                if(sampleFormat == AV_SAMPLE_FMT_U8P) {
+                    for(int i = 0; i < avFrame->nb_samples; i++, idx++) {
+                        for(int ch = 0; ch < channels; ++ch) {
+                            static_cast<unsigned char*>(tempBuffer)[channels * idx + ch] = avFrame->extended_data[ch][i];
+                        }
+                    }
+                } else if(sampleFormat == AV_SAMPLE_FMT_U8) {
+                    unsigned char* byteBuffer = avFrame->extended_data[0];
+                    memcpy(static_cast<unsigned char*>(tempBuffer) + (idx * channels), byteBuffer, avFrame->nb_samples * channels * sizeof(unsigned char));
+                    idx += avFrame->nb_samples;
+                } else if(sampleFormat == AV_SAMPLE_FMT_S16P) {
                     for(int i = 0; i < avFrame->nb_samples; i++, idx++) {
                         for(int ch = 0; ch < channels; ++ch) {
                             static_cast<short*>(tempBuffer)[channels * idx + ch] = reinterpret_cast<short*>(avFrame->extended_data[ch])[i];
@@ -151,16 +166,18 @@ int FfmpegDecoder::getAudioStream(const std::string& filePath, float*& outputBuf
         }
     }
 
-    if (sampleFormat == AV_SAMPLE_FMT_S16 || sampleFormat == AV_SAMPLE_FMT_S16P) {
+    if(sampleFormat == AV_SAMPLE_FMT_U8 || sampleFormat == AV_SAMPLE_FMT_U8P) {
+        for(unsigned long long i = 0; i < length * channels; ++i) {
+            outputBuffer[i] = normalize<unsigned char>(static_cast<unsigned  char*>(tempBuffer)[i]);
+        }
+    } else if (sampleFormat == AV_SAMPLE_FMT_S16 || sampleFormat == AV_SAMPLE_FMT_S16P) {
         for(unsigned long long i = 0; i < length * channels; ++i) {
             outputBuffer[i] = normalize<short>(static_cast<short*>(tempBuffer)[i]);
         }
-        delete[] tempBuffer;
     } else if(sampleFormat == AV_SAMPLE_FMT_S32 || sampleFormat == AV_SAMPLE_FMT_S32P) {
         for(unsigned long long i = 0; i < length * channels; ++i) {
             outputBuffer[i] = normalize<int>(static_cast<int*>(tempBuffer)[i]);
         }
-        delete[] tempBuffer;
     }
 
     //3. Cleanup FFmpeg
@@ -175,6 +192,9 @@ int FfmpegDecoder::getAudioStream(const std::string& filePath, float*& outputBuf
     if (avFormatContext) {
         avformat_close_input(&avFormatContext);
         avFormatContext = nullptr;
+    }
+    if(tempBuffer != nullptr) {
+        delete[] tempBuffer;
     }
     return 0;
 }
