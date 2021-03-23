@@ -12,6 +12,18 @@ const char* const INSTANCE = "instance";
 extern "C" {
 #endif
 
+
+#define GET_MEMBER(env, obj, member_cls, type1, type2, type3, member_name) \
+    jfieldID member_name##_id1 = env->GetFieldID(member_cls, #member_name, type3);  \
+    type1 member_name = env->Get##type2##Field(obj, member_name##_id1);
+
+#define GET_CONFIGURATION(env, configObj, configCls) \
+    GET_MEMBER(env, configObj, configCls, jint, Int, "I", playMode) \
+    GET_MEMBER(env, configObj, configCls, jint, Int, "I", sharingMode) \
+    Configuration* temp = new Configuration(); \
+    temp->sharingMode = playMode; \
+    temp->playMode = sharingMode;
+
 Soriwa* getInstance(JNIEnv* env, const jobject& obj) {
     jclass cls = env->GetObjectClass(obj);
     jfieldID id = env->GetFieldID(cls, INSTANCE, "J");
@@ -41,15 +53,11 @@ JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_deinit(JNIEnv *env, jobje
 JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_addAudio(JNIEnv *env, jobject obj, jobject config, jstring filePath) {
     int result = 0;
     Soriwa* instance = getInstance(env, obj);
-//    jclass cls = env->GetObjectClass(config);
-  //  jfieldID id = env->GetFieldID(cls, "config1", "I");
-
-    Configuration* c = new Configuration();
+    jclass cls = env->GetObjectClass(config);
     std::string path = env->GetStringUTFChars(filePath, NULL);
+    GET_CONFIGURATION(env, config, cls)
+    instance->addAudio(temp, path);
 
-    c->sharingMode = 0;
-    c->playMode = 1;
-    instance->addAudio(c, path);
     return result;
 }
 

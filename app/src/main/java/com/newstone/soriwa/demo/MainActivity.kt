@@ -7,6 +7,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.newstone.soriwa.Configuration
 
 import com.newstone.soriwa.Soriwa
 
@@ -20,7 +21,11 @@ class MainActivity : AppCompatActivity() {
         checkPermissions()
         processor = Soriwa()
         processor.init()
-        id = processor.addAudio(null, "/sdcard/Gaudio/test.wav")
+        val config = Configuration()
+        config.playMode = Configuration.PlayMode.Repeat.ordinal
+        config.playMode = Configuration.SharingMode.Exclusive.ordinal
+
+        id = processor.addAudio(config, "/sdcard/Gaudio/test.wav")
         super.onStart()
     }
 

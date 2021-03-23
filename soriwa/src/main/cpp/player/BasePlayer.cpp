@@ -14,7 +14,7 @@ oboe::DataCallbackResult BasePlayer::onAudioReady(oboe::AudioStream *audioStream
     float* outputData = static_cast<float *>(audioData);
     if(status == PlayerStatus::playing) {
         unsigned int result = source->getFrame(outputData, numFrames);
-        if(result != numFrames) {
+        if(result != numFrames && configuration->playMode == Once) {
             status = PlayerStatus ::ready;
         }
     } else if(status == PlayerStatus ::ready) {
