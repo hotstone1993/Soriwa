@@ -14,6 +14,7 @@ enum class PlayerStatus {
     ready, // Complete loading of music data
     playing,
     finishing,
+    not_support,
     end
 };
 

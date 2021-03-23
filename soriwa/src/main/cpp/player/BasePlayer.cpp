@@ -43,7 +43,12 @@ int BasePlayer::addSource(const std::string& sourcePath, Configuration* config) 
     config = nullptr;
 
     int result = source->extractAudioSourceFromFile(sourcePath);
-    status = PlayerStatus ::ready;
+    if(result == SUCCESS) {
+        status = PlayerStatus ::ready;
+    } else {
+        status = PlayerStatus ::not_support;
+    }
+
     return result;
 }
 

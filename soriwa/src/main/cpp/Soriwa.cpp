@@ -11,7 +11,6 @@
 void loadAudioDataFromFile(std::string path, Configuration* config, int count, std::unordered_map<int, oboe::AudioStream*>& streamMap, std::unordered_map<int, BasePlayer*>& players) {
     BasePlayer* player = new BasePlayer();
     player->addSource(path, config);
-    __android_log_print(ANDROID_LOG_DEBUG, "SORIWA", "%d, %d", config->sharingMode, config->playMode);
 
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output);
