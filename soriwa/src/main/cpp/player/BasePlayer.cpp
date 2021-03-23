@@ -17,6 +17,9 @@ oboe::DataCallbackResult BasePlayer::onAudioReady(oboe::AudioStream *audioStream
         if(result != numFrames) {
             status = PlayerStatus ::ready;
         }
+    } else if(status == PlayerStatus ::ready) {
+        memset(outputData, 0, sizeof(float) * numFrames * source->getChannels());
+        return oboe::DataCallbackResult ::Stop;
     }
 
     return oboe::DataCallbackResult::Continue;
