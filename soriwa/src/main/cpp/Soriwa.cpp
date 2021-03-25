@@ -5,12 +5,12 @@
 #include "player/include/BasePlayer.h"
 #include "common_header.h"
 #include "include/Soriwa.h"
+#include "player/include/CustomPlayer.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void loadAudioDataFromFile(std::string path, Configuration* config, int count, std::unordered_map<int, oboe::AudioStream*>& streamMap, std::unordered_map<int, BasePlayer*>& players) {
-    BasePlayer* player = new BasePlayer();
-    player->addSource(path, config);
+void loadAudioDataFromFile(std::string path, BasePlayer* player, int count, std::unordered_map<int, oboe::AudioStream*>& streamMap) {
+    player->addSource(path);
 
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output);
@@ -24,7 +24,6 @@ void loadAudioDataFromFile(std::string path, Configuration* config, int count, s
     oboe::AudioStream* tempStream;
     builder.openStream(&streamMap[count]);
     streamMap.insert(std::make_pair(count, tempStream));
-    players.insert(std::make_pair(count, player));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,10 +41,18 @@ void Soriwa::deinit() {
     reset();
 }
 
-int Soriwa::addAudio(Configuration* config, const std::string& path) {
-    threadPool.EnqueueJob([=]() {loadAudioDataFromFile(path, config, count, streamMap, players);});
+int Soriwa::addAudio(const Configuration& config, const std::string& path) {
+    BasePlayer* player = nullptr;
+    int currCount = count;
+    if(config.frameSize == 0) {
+        player = new BasePlayer(config);
+    } else {
+        player = new CustomPlayer(config);
+    }
+    threadPool.EnqueueJob([=]() {loadAudioDataFromFile(path, player, currCount, streamMap);});
+    players.insert(std::make_pair(count, player));
 
-    return count + 1;
+    return count++;
 }
 
 int Soriwa::deleteAudioById(int id) {
@@ -74,7 +81,7 @@ int Soriwa::play(int id) {
 }
 
 int Soriwa::stop(int id) {
-    int result = 0;
+    int result = SUCCESS;
     std::unordered_map<int, oboe::AudioStream*>::iterator it =  streamMap.find(id);
     std::unordered_map<int, BasePlayer*>::iterator player = players.find(id);
     if(it != streamMap.end()) {
@@ -92,5 +99,18 @@ void Soriwa::reset() {
     for(auto it = players.begin(); it != players.end(); ++it) {
         delete it->second;
     }
+}
+
+int Soriwa::setRenderer(int id, std::function<void(float*, float*)> renderer) {
+    int result = SUCCESS;
+
+    std::unordered_map<int, BasePlayer*>::iterator player = players.find(id);
+    if(player != players.end() && player->second->getFrameSize() > 0) {
+        static_cast<CustomPlayer *>(player->second)->setRenderer(renderer);
+    } else {
+        return FAIL;
+    }
+
+    return result;
 }
 

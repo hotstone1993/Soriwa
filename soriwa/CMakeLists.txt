@@ -24,6 +24,7 @@ set (SOURCES
         ${SRC_DIR}/com_newstone_soriwa_Soriwa.cpp
         ${SRC_DIR}/Soriwa.cpp
         ${SRC_DIR}/player/BasePlayer.cpp
+        ${SRC_DIR}/player/CustomPlayer.cpp
         ${SRC_DIR}/source/BaseSource.cpp
         ${SRC_DIR}/util/FfmpegDecoder.cpp
         ${SRC_DIR}/util/AudioThreadPool.cpp

@@ -5,8 +5,9 @@
 #include "include/BasePlayer.h"
 #include "common_header.h"
 
-BasePlayer::BasePlayer() : source(nullptr), status(PlayerStatus::loading), configuration(nullptr) {
-
+BasePlayer::BasePlayer(const Configuration& config) : source(nullptr), status(PlayerStatus::loading), configuration(nullptr) {
+    configuration = new Configuration();
+    (*configuration) = config;
 }
 BasePlayer::~BasePlayer() {
 }
@@ -31,16 +32,11 @@ void BasePlayer::onErrorAfterClose(oboe::AudioStream *oboeStream, oboe::Result e
 void BasePlayer::onErrorBeforeClose(oboe::AudioStream * oboeStream, oboe::Result error) {
 }
 
-int BasePlayer::addSource(const std::string& sourcePath, Configuration* config) {
+int BasePlayer::addSource(const std::string& sourcePath) {
     if(source != nullptr) {
         delete source;
     }
     source = new BaseSource();
-
-    configuration = new Configuration();
-    (*configuration) = config;
-    delete config;
-    config = nullptr;
 
     int result = source->extractAudioSourceFromFile(sourcePath);
     if(result == SUCCESS) {
@@ -65,6 +61,10 @@ void BasePlayer::deleteSource(int id) {
 
 PlayerStatus BasePlayer::getStatus() {
     return status;
+}
+
+int BasePlayer::getFrameSize() {
+    return configuration->frameSize;
 }
 
 int BasePlayer::play() {

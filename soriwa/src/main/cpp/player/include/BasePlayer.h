@@ -22,23 +22,25 @@ class Configuration;
 
 class BasePlayer : public oboe::AudioStreamCallback {
 public:
-    BasePlayer();
-    ~BasePlayer();
+    BasePlayer(const Configuration& config);
+    virtual ~BasePlayer();
 
     virtual oboe::DataCallbackResult onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) override ;
     virtual void onErrorAfterClose(oboe::AudioStream *oboeStream, oboe::Result error) override;
     virtual void onErrorBeforeClose(oboe::AudioStream * oboeStream, oboe::Result error) override;
 
-    int addSource(const std::string& sourcePath, Configuration* config);
+    int addSource(const std::string& sourcePath);
     void deleteSource(int id);
 
     int play();
     int stop();
 
     PlayerStatus getStatus();
+    int getFrameSize();
 
     BaseSource* source;
-private:
+
+protected:
     PlayerStatus status;
     Configuration* configuration;
 };

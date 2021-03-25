@@ -18,7 +18,8 @@ public:
     int getChannels();
     int getSampleRate();
     int getBitPerSample();
-private:
+
+protected:
     float* audioBuffer;
     unsigned long long length;
     unsigned long long position;

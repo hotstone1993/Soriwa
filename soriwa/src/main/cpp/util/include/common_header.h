@@ -20,14 +20,17 @@ enum PlayMode {
 struct Configuration {
     int32_t playMode;
     int32_t sharingMode;
+    int32_t frameSize;
 
     Configuration() {
         playMode = Repeat;
         sharingMode = static_cast<int32_t>(oboe::SharingMode::Exclusive);
+        frameSize = 0;
     }
-    Configuration& operator=(Configuration* other) {
-        playMode = other->playMode;
-        sharingMode = other->sharingMode;
+    Configuration& operator=(const Configuration& other) {
+        playMode = other.playMode;
+        sharingMode = other.sharingMode;
+        frameSize = other.frameSize;
         return *this;
     }
 };

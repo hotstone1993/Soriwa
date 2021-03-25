@@ -19,11 +19,12 @@ public:
 
     void init();
     void deinit();
-    int addAudio(Configuration* config, const std::string& path);
+    int addAudio(const Configuration& config, const std::string& path);
     int deleteAudioById(int id);
     int play(int id);
     int stop(int id);
     void reset();
+    int setRenderer(int id, std::function<void(float*, float*)> renderer);
 private:
     int count;
     std::unordered_map<int, BasePlayer*> players;

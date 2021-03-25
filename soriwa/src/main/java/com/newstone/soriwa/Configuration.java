@@ -14,9 +14,11 @@ public class Configuration implements Serializable {
 
     public int playMode;
     public int sharingMode;
+    public int frameSize;
 
     public Configuration() {
         playMode = PlayMode.Repeat.ordinal();
         sharingMode = SharingMode.Exclusive.ordinal();
+        frameSize = 0;
     }
 }
