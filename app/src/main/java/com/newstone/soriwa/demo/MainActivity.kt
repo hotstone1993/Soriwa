@@ -13,19 +13,17 @@ import com.newstone.soriwa.Soriwa
 
 class MainActivity : AppCompatActivity() {
     val kReadExternalStorageRequest = 100
-    lateinit var processor: Soriwa
     lateinit var playBtn: Button
     lateinit var stopBtn: Button
     var idMap: MutableMap<String, Int> = mutableMapOf()
     override fun onStart() {
         checkPermissions()
-        processor = Soriwa()
-        processor.init()
+        Soriwa.getInstance().init()
         val config = Configuration()
         config.playMode = Configuration.PlayMode.Repeat.ordinal
         config.playMode = Configuration.SharingMode.Exclusive.ordinal
 
-        val id = processor.addAudio(config, "/sdcard/Gaudio/test.wav")
+        val id = Soriwa.getInstance().addAudio(config, "/sdcard/Gaudio/test.wav")
         idMap.put("test", id)
         super.onStart()
     }
@@ -35,9 +33,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.layout)
 
         playBtn = findViewById(R.id.playBtn)
-        playBtn.setOnClickListener { processor.play(idMap["test"]?:0) }
+        playBtn.setOnClickListener { Soriwa.getInstance().play(idMap["test"]?:0) }
         stopBtn = findViewById(R.id.stopBtn)
-        stopBtn.setOnClickListener{ processor.stop(idMap["test"]?:0) }
+        stopBtn.setOnClickListener{ Soriwa.getInstance().stop(idMap["test"]?:0) }
     }
 
     private fun checkPermissions() {

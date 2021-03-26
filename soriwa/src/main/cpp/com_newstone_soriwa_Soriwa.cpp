@@ -6,7 +6,7 @@
 #include "include/Soriwa.h"
 #include "common_header.h"
 
-const char* const INSTANCE = "instance";
+const char* const INSTANCE = "nativeInstance";
 
 #ifdef __cplusplus
 extern "C" {
