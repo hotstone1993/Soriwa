@@ -3,21 +3,19 @@ package com.newstone.soriwa;
 public class Soriwa {
     static {
         System.loadLibrary("Soriwa");
-        instance = null;
     }
     private Soriwa() {
         nativeInstance = 0;
     }
+    private static class LazyHolder {
+        public static final Soriwa instance = new Soriwa();
+    }
 
     private long nativeInstance;
     private CustomRendererListener customRendererListener;
-    private static Soriwa instance;
 
     public static Soriwa getInstance() {
-        if(instance == null) {
-            instance = new Soriwa();
-        }
-        return instance;
+        return LazyHolder.instance;
     }
 
     public native void init();
