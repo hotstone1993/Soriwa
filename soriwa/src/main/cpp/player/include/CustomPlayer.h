@@ -17,9 +17,10 @@ public:
     virtual void onErrorAfterClose(oboe::AudioStream *oboeStream, oboe::Result error) override;
     virtual void onErrorBeforeClose(oboe::AudioStream * oboeStream, oboe::Result error) override;
 
-    void setRenderer(std::function<void(float* in, float* out)> renderer);
+    virtual int addSource(const std::string& sourcePath) override;
+    void setRenderer(std::function<void(float*, float*, int)> renderer);
 private:
-    std::function<void(float* in, float* out)> renderer;
+    std::function<void(float*, float*, int)> renderer;
     float* output;
 };
 

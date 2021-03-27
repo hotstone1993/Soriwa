@@ -12,7 +12,7 @@ public class Soriwa {
     }
 
     private long nativeInstance;
-    private CustomRendererListener customRendererListener;
+    private CustomRendererListener customRendererListener = null;
 
     public static Soriwa getInstance() {
         return LazyHolder.instance;
@@ -28,11 +28,13 @@ public class Soriwa {
     public void setCustomRendererListener(CustomRendererListener l) {
         customRendererListener = l;
     }
-    private void render(float[] input, float[] output) {
-        customRendererListener.render(input, output);
+    private void render(float[] input, float[] output, int samplePerBlock) {
+        if(customRendererListener != null) {
+            customRendererListener.render(input, output, samplePerBlock);
+        }
+    }
+    public interface CustomRendererListener {
+        void render(float[] input, float[] output, int samplePerBlock);
     }
 
-    abstract class CustomRendererListener {
-        public abstract void render(float[] input, float[] output);
-    }
 }

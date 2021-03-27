@@ -29,7 +29,7 @@ public:
     virtual void onErrorAfterClose(oboe::AudioStream *oboeStream, oboe::Result error) override;
     virtual void onErrorBeforeClose(oboe::AudioStream * oboeStream, oboe::Result error) override;
 
-    int addSource(const std::string& sourcePath);
+    virtual int addSource(const std::string& sourcePath);
     void deleteSource(int id);
 
     int play();

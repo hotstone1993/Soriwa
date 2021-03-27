@@ -24,7 +24,7 @@ public:
     int play(int id);
     int stop(int id);
     void reset();
-    int setRenderer(int id, std::function<void(float*, float*)> renderer);
+    int setRenderer(int id, std::function<void(float*, float*, int)> renderer);
 private:
     int count;
     std::unordered_map<int, BasePlayer*> players;

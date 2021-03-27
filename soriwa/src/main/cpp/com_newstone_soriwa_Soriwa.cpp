@@ -12,6 +12,7 @@ const char* const INSTANCE = "nativeInstance";
 extern "C" {
 #endif
 
+jobject objInstance;
 
 #define GET_MEMBER(env, obj, member_cls, type1, type2, type3, member_name) \
     jfieldID member_name##_id1 = env->GetFieldID(member_cls, #member_name, type3);  \
@@ -33,11 +34,85 @@ Soriwa* getInstance(JNIEnv* env, const jobject& obj) {
     return reinterpret_cast<Soriwa*>(instancePointer);
 }
 
-void renderer(float* input, float* output) {
+// https://stackoverflow.com/questions/30026030/what-is-the-best-way-to-save-jnienv/30026231#30026231
+JavaVM* g_vm = nullptr;
 
+void DeferThreadDetach(JNIEnv *env) {
+    static pthread_key_t thread_key;
+
+    // Set up a Thread Specific Data key, and a callback that
+    // will be executed when a thread is destroyed.
+    // This is only done once, across all threads, and the value
+    // associated with the key for any given thread will initially
+    // be NULL.
+    static auto run_once = [] {
+        const auto err = pthread_key_create(&thread_key, [] (void *ts_env) {
+            if (ts_env) {
+                g_vm->DetachCurrentThread();
+            }
+        });
+        if (err) {
+            // Failed to create TSD key. Throw an exception if you want to.
+        }
+        return 0;
+    }();
+
+    // For the callback to actually be executed when a thread exits
+    // we need to associate a non-NULL value with the key on that thread.
+    // We can use the JNIEnv* as that value.
+    const auto ts_env = pthread_getspecific(thread_key);
+    if (!ts_env) {
+        if (pthread_setspecific(thread_key, env)) {
+            // Failed to set thread-specific value for key. Throw an exception if you want to.
+        }
+    }
+}
+
+JNIEnv* GetJniEnv() {
+    JNIEnv *env = nullptr;
+    // We still call GetEnv first to detect if the thread already
+    // is attached. This is done to avoid setting up a DetachCurrentThread
+    // call on a Java thread.
+
+    // g_vm is a global.
+    auto get_env_result = g_vm->GetEnv((void**)&env, JNI_VERSION_1_6);
+    if (get_env_result == JNI_EDETACHED) {
+        if (g_vm->AttachCurrentThread(&env, NULL) == JNI_OK) {
+            DeferThreadDetach(env);
+        } else {
+            // Failed to attach thread. Throw an exception if you want to.
+        }
+    } else if (get_env_result == JNI_EVERSION) {
+        // Unsupported JNI version. Throw an exception if you want to.
+    }
+    return env;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void renderer(float* input, float* output, int samplePerBlock) {
+    // std::lock_guard<std::mutex> lt(lock_);
+    static jmethodID cb = nullptr;
+    JNIEnv* envInstance = GetJniEnv();
+
+    if (nullptr == cb){
+        jclass cls = envInstance->GetObjectClass(objInstance);
+        cb = envInstance->GetMethodID(cls, "render", "([F[FI)V");
+    }
+    jfloatArray jInput = envInstance->NewFloatArray(samplePerBlock);
+    jfloatArray jOutput = envInstance->NewFloatArray(samplePerBlock);
+
+    envInstance->SetFloatArrayRegion(jInput, 0, samplePerBlock, input);
+    envInstance->CallVoidMethod(objInstance, cb, jInput, jOutput, samplePerBlock);
+    float* tempInput = envInstance->GetFloatArrayElements(jInput, NULL);
+    float* tempOutput = envInstance->GetFloatArrayElements(jOutput, NULL);
+    memcpy(output, tempOutput, sizeof(float) * samplePerBlock);
+    envInstance->ReleaseFloatArrayElements(jInput, tempInput, JNI_ABORT);
+    envInstance->ReleaseFloatArrayElements(jOutput, tempOutput, JNI_ABORT);
 }
 
 JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_init(JNIEnv *env, jobject obj) {
+    env->GetJavaVM(&g_vm);
+    objInstance = env->NewGlobalRef(obj);
     Soriwa* newInstance = new Soriwa();
     newInstance->init();
 
@@ -47,6 +122,7 @@ JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_init(JNIEnv *env, jobject
 }
 
 JNIEXPORT void JNICALL Java_com_newstone_soriwa_Soriwa_deinit(JNIEnv *env, jobject obj) {
+    env->DeleteGlobalRef(objInstance);
     Soriwa* instance = getInstance(env, obj);
     instance->deinit();
     delete instance;

@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.newstone.soriwa.Configuration
 
 import com.newstone.soriwa.Soriwa
+import com.newstone.soriwa.Soriwa.CustomRendererListener
 
 class MainActivity : AppCompatActivity() {
     val kReadExternalStorageRequest = 100
@@ -22,9 +23,17 @@ class MainActivity : AppCompatActivity() {
         val config = Configuration()
         config.playMode = Configuration.PlayMode.Repeat.ordinal
         config.playMode = Configuration.SharingMode.Exclusive.ordinal
+        config.frameSize = 1000;
 
         val id = Soriwa.getInstance().addAudio(config, "/sdcard/Gaudio/test.wav")
         idMap.put("test", id)
+        Soriwa.getInstance().setCustomRendererListener( object : CustomRendererListener{
+            override fun render(input: FloatArray?, output: FloatArray?, samplePerBlock: Int) {
+                for(idx in 0 until samplePerBlock) {
+                    output!![idx] = input!![idx] * 0.1f
+                }
+            }
+        })
         super.onStart()
     }
 
@@ -66,3 +75,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+

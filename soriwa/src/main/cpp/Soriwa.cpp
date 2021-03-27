@@ -101,7 +101,7 @@ void Soriwa::reset() {
     }
 }
 
-int Soriwa::setRenderer(int id, std::function<void(float*, float*)> renderer) {
+int Soriwa::setRenderer(int id, std::function<void(float*, float*, int)> renderer) {
     int result = SUCCESS;
 
     std::unordered_map<int, BasePlayer*>::iterator player = players.find(id);
