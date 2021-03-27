@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
     var idMap: MutableMap<String, Int> = mutableMapOf()
     override fun onStart() {
         checkPermissions()
-        Soriwa.getInstance().init()
         val config = Configuration()
         config.playMode = Configuration.PlayMode.Repeat.ordinal
         config.playMode = Configuration.SharingMode.Exclusive.ordinal
@@ -45,6 +44,11 @@ class MainActivity : AppCompatActivity() {
         playBtn.setOnClickListener { Soriwa.getInstance().play(idMap["test"]?:0) }
         stopBtn = findViewById(R.id.stopBtn)
         stopBtn.setOnClickListener{ Soriwa.getInstance().stop(idMap["test"]?:0) }
+    }
+
+    override fun finishAffinity() {
+        super.finishAffinity()
+        Soriwa.getInstance().deinit()
     }
 
     private fun checkPermissions() {

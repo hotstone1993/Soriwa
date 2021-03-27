@@ -6,6 +6,7 @@ public class Soriwa {
     }
     private Soriwa() {
         nativeInstance = 0;
+        init();
     }
     private static class LazyHolder {
         public static final Soriwa instance = new Soriwa();
@@ -18,7 +19,7 @@ public class Soriwa {
         return LazyHolder.instance;
     }
 
-    public native void init();
+    private native void init();
     public native void deinit();
     public native int addAudio(Configuration config, String path);
     public native int deleteAudioById(int id);
