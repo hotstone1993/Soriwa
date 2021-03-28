@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -17,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var playBtn: Button
     lateinit var stopBtn: Button
     var idMap: MutableMap<String, Int> = mutableMapOf()
+    var coeff : Float = 1.0f
     override fun onStart() {
         checkPermissions()
         val config = Configuration()
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         Soriwa.getInstance().setCustomRendererListener( object : CustomRendererListener{
             override fun render(input: FloatArray?, output: FloatArray?, samplePerBlock: Int) {
                 for(idx in 0 until samplePerBlock) {
-                    output!![idx] = input!![idx] * 0.1f
+                    output!![idx] = input!![idx] * coeff
                 }
             }
         })
@@ -44,6 +47,23 @@ class MainActivity : AppCompatActivity() {
         playBtn.setOnClickListener { Soriwa.getInstance().play(idMap["test"]?:0) }
         stopBtn = findViewById(R.id.stopBtn)
         stopBtn.setOnClickListener{ Soriwa.getInstance().stop(idMap["test"]?:0) }
+        val textView: TextView = findViewById(R.id.textView)
+        val seekBar: SeekBar = findViewById(R.id.custom)
+        seekBar.progress = seekBar.max
+
+        seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                coeff = progress.toFloat() / 10.0f
+                textView.text = coeff.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+
+        })
     }
 
     override fun finishAffinity() {
