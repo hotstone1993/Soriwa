@@ -16,8 +16,8 @@ import com.newstone.soriwa.Soriwa.CustomRendererListener
 
 class MainActivity : AppCompatActivity() {
     val kReadExternalStorageRequest = 100
-    lateinit var playBtn: Button
-    lateinit var stopBtn: Button
+    lateinit var playBtns: MutableList<Button>
+    lateinit var stopBtns: MutableList<Button>
     var idMap: MutableMap<String, Int> = mutableMapOf()
     var coeff : Float = 1.0f
     override fun onStart() {
@@ -27,8 +27,12 @@ class MainActivity : AppCompatActivity() {
         config.playMode = Configuration.SharingMode.Exclusive.ordinal
         config.frameSize = 1000;
 
-        val id = Soriwa.getInstance().addAudio(config, "/sdcard/Gaudio/test.wav")
-        idMap.put("test", id)
+        val id1 = Soriwa.getInstance().addAudio(config, "/sdcard/Gaudio/test.wav")
+        idMap.put("test1", id1)
+        val id2 = Soriwa.getInstance().addAudio(config, "/sdcard/Gaudio/test.wav")
+        idMap.put("test2", id2)
+        val id3 = Soriwa.getInstance().addAudio(config, "/sdcard/Gaudio/test.wav")
+        idMap.put("test3", id3)
         Soriwa.getInstance().setCustomRendererListener( object : CustomRendererListener{
             override fun render(input: FloatArray?, output: FloatArray?, samplePerBlock: Int) {
                 for(idx in 0 until samplePerBlock) {
@@ -42,15 +46,24 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout)
+        playBtns = mutableListOf<Button>()
+        stopBtns = mutableListOf<Button>()
 
-        playBtn = findViewById(R.id.playBtn)
-        playBtn.setOnClickListener { Soriwa.getInstance().play(idMap["test"]?:0) }
-        stopBtn = findViewById(R.id.stopBtn)
-        stopBtn.setOnClickListener{ Soriwa.getInstance().stop(idMap["test"]?:0) }
+        for(idx in 1 until 4) {
+            val playBtnId = resources.getIdentifier("playBtn" + idx, "id", packageName)
+            val playBtn = findViewById<Button>(playBtnId)
+            val stopBtnId = resources.getIdentifier("stopBtn" + idx, "id", packageName)
+            val stopBtn = findViewById<Button>(stopBtnId)
+            playBtn.setOnClickListener { Soriwa.getInstance().play(idMap["test" + idx]?:0) }
+            stopBtn.setOnClickListener{ Soriwa.getInstance().stop(idMap["test" + idx]?:0) }
+
+            playBtns.add(playBtn)
+            stopBtns.add(stopBtn)
+        }
+
         val textView: TextView = findViewById(R.id.textView)
         val seekBar: SeekBar = findViewById(R.id.custom)
         seekBar.progress = seekBar.max
-
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 coeff = progress.toFloat() / 10.0f
@@ -59,7 +72,6 @@ class MainActivity : AppCompatActivity() {
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
             }
-
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
 
