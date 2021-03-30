@@ -37,6 +37,7 @@ public:
 
     PlayerStatus getStatus();
     int getFrameSize();
+    int getSharingMode();
 
     BaseSource* source;
 

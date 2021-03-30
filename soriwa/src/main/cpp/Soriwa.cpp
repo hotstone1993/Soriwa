@@ -14,8 +14,8 @@ void loadAudioDataFromFile(std::string path, BasePlayer* player, int count, std:
 
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output);
-    builder.setPerformanceMode(oboe::PerformanceMode::LowLatency);
-    builder.setSharingMode(oboe::SharingMode::Exclusive);
+    builder.setPerformanceMode(oboe::PerformanceMode::None);
+    builder.setSharingMode(static_cast<oboe::SharingMode>(player->getSharingMode()));
     builder.setFormat(oboe::AudioFormat::Float);
     builder.setChannelCount(player->source->getChannels());
     builder.setSampleRate(player->source->getSampleRate());

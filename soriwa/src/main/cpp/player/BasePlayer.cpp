@@ -67,6 +67,10 @@ int BasePlayer::getFrameSize() {
     return configuration->frameSize;
 }
 
+int BasePlayer::getSharingMode() {
+    return configuration->sharingMode;
+}
+
 int BasePlayer::play() {
     if(status == PlayerStatus::ready) {
         status = PlayerStatus::playing;
