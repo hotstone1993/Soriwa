@@ -5,6 +5,8 @@
 #include "include/BasePlayer.h"
 #include "common_header.h"
 
+unsigned int total = 0;
+
 BasePlayer::BasePlayer(const Configuration& config) : source(nullptr), status(PlayerStatus::loading), configuration(nullptr) {
     configuration = new Configuration();
     (*configuration) = config;

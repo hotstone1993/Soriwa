@@ -27,7 +27,7 @@ void loadAudioDataFromFile(std::string path, BasePlayer* player, int count, std:
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Soriwa::Soriwa() : count(0), threadPool(3) {
+Soriwa::Soriwa() : count(0), total(0), threadPool(3) {
 }
 
 Soriwa::~Soriwa() {
@@ -51,6 +51,7 @@ int Soriwa::addAudio(const Configuration& config, const std::string& path) {
     }
     threadPool.EnqueueJob([=]() {loadAudioDataFromFile(path, player, currCount, streamMap);});
     players.insert(std::make_pair(count, player));
+    ++total;
 
     return count++;
 }
@@ -58,6 +59,7 @@ int Soriwa::addAudio(const Configuration& config, const std::string& path) {
 int Soriwa::deleteAudioById(int id) {
     int result = 0;
     players[id]->deleteSource(id);
+    --total;
     auto it = streamMap.find(id);
     it->second->close();
     streamMap.erase(it);

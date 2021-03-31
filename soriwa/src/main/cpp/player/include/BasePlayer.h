@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <BaseSource.h>
 
+extern unsigned int total;
+
 enum class PlayerStatus {
     loading, // Parsing music data
     ready, // Complete loading of music data
