@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -14,8 +15,11 @@ import com.newstone.soriwa.Configuration
 import com.newstone.soriwa.Soriwa
 import com.newstone.soriwa.Soriwa.CustomRendererListener
 
+
+
 class MainActivity : AppCompatActivity() {
     val kReadExternalStorageRequest = 100
+
     lateinit var playBtns: MutableList<Button>
     lateinit var stopBtns: MutableList<Button>
     var idMap: MutableMap<String, Int> = mutableMapOf()
@@ -46,6 +50,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout)
+        val model: MainViewModel by viewModels()
+
         playBtns = mutableListOf<Button>()
         stopBtns = mutableListOf<Button>()
 
