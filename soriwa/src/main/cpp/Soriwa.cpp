@@ -27,7 +27,7 @@ void loadAudioDataFromFile(std::string path, BasePlayer* player, int count, std:
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Soriwa::Soriwa() : count(0), total(0), threadPool(3) {
+Soriwa::Soriwa() : count(0), threadPool(3) {
 }
 
 Soriwa::~Soriwa() {
