@@ -2,16 +2,13 @@ package com.newstone.soriwa.demo
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.database.Observable
 import android.os.Bundle
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.observe
 import com.newstone.soriwa.Configuration
 
 import com.newstone.soriwa.Soriwa
@@ -22,10 +19,11 @@ import com.newstone.soriwa.Soriwa.CustomRendererListener
 class MainActivity : AppCompatActivity() {
     val kReadExternalStorageRequest = 100
 
-    val model: MainViewModel by viewModels()
     lateinit var playBtns: MutableList<Button>
     lateinit var stopBtns: MutableList<Button>
     var idMap: MutableMap<String, Int> = mutableMapOf()
+    var coeff:Float = 1.0f
+
     override fun onStart() {
         checkPermissions()
         val config = Configuration()
@@ -46,7 +44,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout)
-        val model: MainViewModel by viewModels()
 
         playBtns = mutableListOf<Button>()
         stopBtns = mutableListOf<Button>()
@@ -66,14 +63,10 @@ class MainActivity : AppCompatActivity() {
         val textView: TextView = findViewById(R.id.textView)
         val seekBar: SeekBar = findViewById(R.id.custom)
 
-        model.coeff.observe(this) {
-            textView.text = it.toString()
-        }
-
         Soriwa.getInstance().setCustomRendererListener( object : CustomRendererListener{
             override fun render(input: FloatArray?, output: FloatArray?, samplePerBlock: Int) {
                 for(idx in 0 until samplePerBlock) {
-                    output!![idx] = input!![idx] * model.coeff.value!!
+                    output!![idx] = input!![idx] * coeff
                 }
             }
         })
@@ -81,7 +74,8 @@ class MainActivity : AppCompatActivity() {
         seekBar.progress = seekBar.max
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                model.coeff.value = progress.toFloat() / 10.0f
+                coeff = progress.toFloat() / 10.0f
+                textView.text = coeff.toString()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -92,8 +86,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    override fun finishAffinity() {
-        super.finishAffinity()
+    override fun onDestroy() {
+        super.onDestroy()
         Soriwa.getInstance().deinit()
     }
 
