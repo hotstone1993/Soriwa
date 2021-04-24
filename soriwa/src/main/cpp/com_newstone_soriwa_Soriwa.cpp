@@ -5,6 +5,7 @@
 #include "include/com_newstone_soriwa_Soriwa.h"
 #include "include/Soriwa.h"
 #include "common_header.h"
+#include "soriwa_version.h"
 
 const char* const INSTANCE = "nativeInstance";
 
@@ -162,6 +163,14 @@ JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_stop(JNIEnv *env, jobject
     Soriwa* instance = getInstance(env, obj);
     result = instance->stop(id);
     return result;
+}
+
+JNIEXPORT jstring JNICALL Java_com_newstone_soriwa_Soriwa_getVersion(JNIEnv *env, jobject obj) {
+    int result = 0;
+    std::string version = Version::getVersion();
+    jstring jstrBuf = env->NewStringUTF(version.c_str());
+
+    return jstrBuf;
 }
 #ifdef __cplusplus
 }

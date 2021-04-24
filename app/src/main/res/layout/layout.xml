@@ -35,6 +35,14 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/version"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:text="Version: "/>
+
+        <TextView
             android:id="@+id/title1"
             android:layout_width="match_parent"
             android:layout_height="30dp"/>

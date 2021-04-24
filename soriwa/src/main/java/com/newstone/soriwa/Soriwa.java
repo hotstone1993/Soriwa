@@ -26,6 +26,8 @@ public class Soriwa {
     public native void play(int id);
     public native void stop(int id);
 
+    public static native String getVersion();
+
     public void setCustomRendererListener(CustomRendererListener l) {
         customRendererListener = l;
     }

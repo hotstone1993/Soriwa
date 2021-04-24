@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         val config = Configuration()
         config.playMode = Configuration.PlayMode.Repeat.ordinal
         config.playMode = Configuration.SharingMode.Exclusive.ordinal
-        config.frameSize = 1000;
+        config.frameSize = 1000
 
         val id1 = Soriwa.getInstance().addAudio(config, "/sdcard/Gaudio/test.wav")
         idMap.put("test1", id1)
@@ -60,8 +60,11 @@ class MainActivity : AppCompatActivity() {
             stopBtns.add(stopBtn)
         }
 
+        val versionTextView: TextView = findViewById(R.id.version)
         val textView: TextView = findViewById(R.id.textView)
         val seekBar: SeekBar = findViewById(R.id.custom)
+
+        versionTextView.text = Soriwa.getVersion()
 
         Soriwa.getInstance().setCustomRendererListener( object : CustomRendererListener{
             override fun render(input: FloatArray?, output: FloatArray?, samplePerBlock: Int) {

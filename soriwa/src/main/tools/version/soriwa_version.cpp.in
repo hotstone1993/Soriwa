@@ -1,0 +1,34 @@
+#include "soriwa_version.h"
+
+using namespace std;
+
+std::string Version::getVersion()
+{
+  string months[] = {" Jan", " Feb", " Mar", " Apr", " May", " Jun", " Jul", " Aug", " Sep", " Oct", " Nov", " Dec"};
+  string version = "@GIT_COMMIT_ID@";
+  string date = @GIT_COMMIT_DATE@;
+  string pieces[5];
+  int start = 0;
+  int end = 0;
+  int count = 0;
+
+  for(int idx = 0; idx < date.size(); ++idx) {
+    if(date[idx] == ' ') {
+      end = idx;
+    }
+
+    if(start != end) {
+      pieces[count++] = date.substr(start, end - start);
+      start = end;
+    }
+  }
+
+  for(int m = 0; m < 12; ++m) {
+    if(months[m] == pieces[1]) {
+      pieces[1] = to_string(m + 1);
+      break;
+    }
+  }
+
+  return "(" + version + ")\n" + pieces[4] +  ". " + pieces[1] + "." + pieces[2] + " " + pieces[3];
+}

@@ -5,6 +5,25 @@ set (INTERNAL_SHARED_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/src/main/jniLibs/${ANDR
 set (OBOE_DIR ../oboe)
 set (SRC_DIR src/main/cpp)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+
+# Get git commit number and date.
+execute_process(
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND git rev-parse --short HEAD
+        RESULT_VARIABLE SHORT_HASH_RESULT
+        OUTPUT_VARIABLE GIT_COMMIT_ID
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+execute_process(
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND git log HEAD --format="%cd" -1
+        RESULT_VARIABLE SHORT_HASH_RESULT
+        OUTPUT_VARIABLE GIT_COMMIT_DATE
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+list ( APPEND CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "src/main/tools/cmake" )
+include ( gaudiofx_version )
+
 # FFMpeg Library
 add_library(lib_avcodec SHARED IMPORTED)
 set_target_properties(lib_avcodec PROPERTIES IMPORTED_LOCATION
@@ -28,6 +47,7 @@ set (SOURCES
         ${SRC_DIR}/source/BaseSource.cpp
         ${SRC_DIR}/util/FfmpegDecoder.cpp
         ${SRC_DIR}/util/AudioThreadPool.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/build/soriwa_version.cpp
         )
 
 set (HEADERS
@@ -36,6 +56,7 @@ set (HEADERS
         ${SRC_DIR}/source/include
         ${SRC_DIR}/util/include
         ${SRC_DIR}/ffmpeg/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/build
         )
 
 find_library(android-lib android)

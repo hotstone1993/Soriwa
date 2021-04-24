@@ -49,11 +49,17 @@ JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_play
 
 /*
  * Class:     com_newstone_soriwa_Soriwa
- * Method:    play
+ * Method:    stop
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_com_newstone_soriwa_Soriwa_stop
         (JNIEnv *, jobject, jint);
+/*
+ * Class:     com_newstone_soriwa_Soriwa
+ * Method:    getVersion
+ * Signature: ()S
+ */
+JNIEXPORT jstring JNICALL Java_com_newstone_soriwa_Soriwa_getVersion(JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }
